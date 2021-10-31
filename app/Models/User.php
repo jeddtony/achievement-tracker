@@ -64,4 +64,50 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Lesson::class)->wherePivot('watched', true);
     }
+
+     /**
+     * The achievements awarded to a user.
+     */
+    public function achievements()
+    {
+        return $this->belongsToMany(Achievement::class);
+        // ->wherePivot('is_completed', true);
+    }
+
+    /**
+     * The achievements awarded to a user.
+     */
+    public function completedAchievements()
+    {
+        return $this->belongsToMany(Achievement::class)
+        ->wherePivot('is_completed', true);
+    }
+     /**
+     * The next achievement for a user to attain.
+     */
+    public function nextAchievement()
+    {
+        return $this->belongsToMany(Achievement::class)
+        ->withPivot('current_step', 'no_of_steps_required')
+        ->wherePivot('is_completed', false);
+    }
+
+    /**
+     * The badges of a user.
+     */
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class)
+        ->wherePivot('is_completed', true);
+    }
+
+    /**
+     * The next badges of a user.
+     */
+    public function nextBadges()
+    {
+        return $this->belongsToMany(Badge::class)
+        ->withPivot('no_of_current_achievements', 'no_of_required_achievements')
+        ->wherePivot('is_completed', false);
+    }
 }
