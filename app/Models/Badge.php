@@ -5,21 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Achievement extends Model
+class Badge extends Model
 {
     use HasFactory;
-
-       /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'slug',
-        'title',
+        'name',
         'description',
-        'type',
-        'condition',
-        'next_step_id'
+        'no_of_achievements',
+        'next_badge_id'
     ];
 }
