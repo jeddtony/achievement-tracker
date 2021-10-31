@@ -65,10 +65,7 @@ class AchievementController extends Controller
         
         // $user = User::find(1);
         CommentWritten::dispatch($comment);
-        // Todo:: Create an event that updates the achievement_user table
-        // AchievementUnlocked::dispatch('first_lesson_watched', $user);
 
-        // BadgeUnlocked::dispatch('beginner', $user);
     }
 
  /**
@@ -77,14 +74,8 @@ class AchievementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function store(Request $request)
     public function storeLesson()
     {
-        //
-        // $comment = new Comment();
-        // $comment->body = 'This is the body';
-        // $comment->user_id = 1;
-        // $comment->save();
         
        DB::table('lesson_user')
         ->insert([
@@ -94,12 +85,8 @@ class AchievementController extends Controller
         ]);
         $lesson = Lesson::find(1);
         $user = User::find(1);
-        // $user = User::find(1);
         LessonWatched::dispatch($lesson, $user);
-        // Todo:: Create an event that updates the achievement_user table
-        // AchievementUnlocked::dispatch('first_lesson_watched', $user);
-
-        // BadgeUnlocked::dispatch('beginner', $user);
+   
     }
 
 
