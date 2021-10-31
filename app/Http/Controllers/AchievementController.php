@@ -62,13 +62,11 @@ class AchievementController extends Controller
         $comment->body = 'This is the body';
         $comment->user_id = 1;
         $comment->save();
-        
-        // $user = User::find(1);
-        CommentWritten::dispatch($comment);
 
+        CommentWritten::dispatch($comment);
     }
 
- /**
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -76,17 +74,16 @@ class AchievementController extends Controller
      */
     public function storeLesson()
     {
-        
-       DB::table('lesson_user')
-        ->insert([
-            'user_id' => 1,
-            'lesson_id' => 1,
-            'watched' => 1
-        ]);
+
+        DB::table('lesson_user')
+            ->insert([
+                'user_id' => 1,
+                'lesson_id' => 1,
+                'watched' => 1
+            ]);
         $lesson = Lesson::find(1);
         $user = User::find(1);
         LessonWatched::dispatch($lesson, $user);
-   
     }
 
 
@@ -138,10 +135,10 @@ class AchievementController extends Controller
     public function getUnlockedAchievements($userId): array
     {
         $achievements = User::where('id', $userId)->with('completedAchievements')->first();
-        
+
         $arrayOfTitles = [];
         $completedAchievements = $achievements->completedAchievements;
-        foreach($completedAchievements as $completedAchievement => $completed){
+        foreach ($completedAchievements as $completedAchievement => $completed) {
             array_push($arrayOfTitles, $completed->title);
         }
         return $arrayOfTitles;
@@ -153,35 +150,37 @@ class AchievementController extends Controller
 
         $arrayOfTitles = [];
         $completedAchievements = $achievements->nextAchievement;
-        foreach($completedAchievements as $completedAchievement => $completed){
+        foreach ($completedAchievements as $completedAchievement => $completed) {
             array_push($arrayOfTitles, $completed->title);
         }
         return $arrayOfTitles;
     }
 
-    public function getCurrentBadge($userId) {
+    public function getCurrentBadge($userId)
+    {
         $user = User::where('id', $userId)->with('badges')->first();
         $completedBadges = $user->badges;
-        if(count($completedBadges)){
+        if (count($completedBadges)) {
             return $completedBadges[$completedBadges->count() - 1]->name;
-           
         }
         return null;
     }
 
-    public function getNextBadge($userId) {
+    public function getNextBadge($userId)
+    {
         $user = User::where('id', $userId)->with('nextBadges')->first();
         $uncompletedBadges = $user->nextBadges;
-        if(count($uncompletedBadges)){
+        if (count($uncompletedBadges)) {
             return $uncompletedBadges[$uncompletedBadges->count() - 1]->name;
         }
         return null;
     }
 
-    public function getRemainingToUnlockNextBadge($userId){
+    public function getRemainingToUnlockNextBadge($userId)
+    {
         $user = User::where('id', $userId)->with('nextBadges')->first();
         $uncompletedBadges = $user->nextBadges;
-        if(count($uncompletedBadges)){
+        if (count($uncompletedBadges)) {
             return $uncompletedBadges[0]->pivot->no_of_required_achievements - $uncompletedBadges[0]->pivot->no_of_current_achievements;
         }
         return 0;

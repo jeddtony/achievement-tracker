@@ -39,8 +39,8 @@ class TriggerEvent extends Command
     public function handle()
     {
         $achievementController = new AchievementController();
-        // $achievementController->storeComment();
-        // $achievementController->storeLesson();
+        $achievementController->storeComment();
+        $achievementController->storeLesson();
         return Command::SUCCESS;
     }
 }

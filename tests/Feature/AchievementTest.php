@@ -25,27 +25,27 @@ class AchievementTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-       $user = User::factory()->create();
-        
-    $this->user = $user;
+        $user = User::factory()->create();
 
-    // Create achievement
-    Achievement::create([
-        'slug' => 'first_lesson_watched',
-       'title' => 'First Lesson Watched',
-       'description' => 'The description for the first lesson watched',
-       'type' => 'comment',
-       'condition' => 1,
-       'next_achievement_id' => 2
-   ]);
+        $this->user = $user;
 
-   // Create badge
-   Badge::create([
-    'slug' => 'beginner',
-    'name' => 'Beginner',
-    'description' => 'The description for the beginner',
-    'no_of_achievements' => 0,
-    'next_badge_id' => 2
+        // Create achievement
+        Achievement::create([
+            'slug' => 'first_lesson_watched',
+            'title' => 'First Lesson Watched',
+            'description' => 'The description for the first lesson watched',
+            'type' => 'comment',
+            'condition' => 1,
+            'next_achievement_id' => 2
+        ]);
+
+        // Create badge
+        Badge::create([
+            'slug' => 'beginner',
+            'name' => 'Beginner',
+            'description' => 'The description for the beginner',
+            'no_of_achievements' => 0,
+            'next_badge_id' => 2
         ]);
 
         Badge::create([
@@ -54,11 +54,11 @@ class AchievementTest extends TestCase
             'description' => 'The description for the intermediate badge',
             'no_of_achievements' => 0,
             'next_badge_id' => 2
-                ]);
+        ]);
 
         Lesson::factory()
-        ->count(20)
-        ->create();
+            ->count(20)
+            ->create();
 
         DB::table('achievement_user')->insert([
             'user_id' => 1,
@@ -67,7 +67,7 @@ class AchievementTest extends TestCase
             'no_of_steps_required' => 1,
             'is_completed' => true
         ]);
-    
+
         DB::table('achievement_user')->insert([
             'user_id' => 1,
             'achievement_id' => 2,
@@ -89,33 +89,35 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    // public function test_example()
-    // {
-    //     $response = $this->get('/');
+    public function test_example()
+    {
+        $response = $this->get('/users/1/achievements');
 
-    //     $response->assertStatus(200);
-    // }
+        $response->assertStatus(200);
+    }
 
     /**
      * Test that CommentWritten was dispatched.
      *
      * @return void
      */
-    public function test_comment_written_was_dispatched(){
+    public function test_comment_written_was_dispatched()
+    {
         Event::fake();
 
         $achievement = new AchievementController();
-        $achievement->store();
+        $achievement->storeComment();
 
         Event::assertDispatched(CommentWritten::class);
     }
 
-     /**
+    /**
      * Test that AchievementUnlocked was dispatched.
      *
      * @return void
      */
-    public function test_achievement_unlocked_was_dispatched(){
+    public function test_achievement_unlocked_was_dispatched()
+    {
         Event::fake();
 
         AchievementUnlocked::dispatch('first_lesson_watched', $this->user);
@@ -128,7 +130,8 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_badge_unlocked_was_dispatched(){
+    public function test_badge_unlocked_was_dispatched()
+    {
         Event::fake();
 
         BadgeUnlocked::dispatch('beginner', $this->user);
@@ -136,16 +139,19 @@ class AchievementTest extends TestCase
         Event::assertDispatched(BadgeUnlocked::class);
     }
 
-     /**
+    /**
      * Test that AchievementUnlocked has a listener.
      *
      * @return void
      */
-    public function test_achievement_unlocked_has_a_listener(){
+    public function test_achievement_unlocked_has_a_listener()
+    {
         Event::fake();
 
-        Event::assertListening(AchievementUnlocked::class, 
-        AchievementUnlockedListener::class);
+        Event::assertListening(
+            AchievementUnlocked::class,
+            AchievementUnlockedListener::class
+        );
     }
 
     /**
@@ -153,11 +159,14 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_badge_unlocked_has_a_listener(){
+    public function test_badge_unlocked_has_a_listener()
+    {
         Event::fake();
 
-        Event::assertListening(BadgeUnlocked::class, 
-        BadgeUnlockedListener::class);
+        Event::assertListening(
+            BadgeUnlocked::class,
+            BadgeUnlockedListener::class
+        );
     }
 
     /**
@@ -165,10 +174,11 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_that_a_user_has_unlocked_achievements(){
+    public function test_that_a_user_has_unlocked_achievements()
+    {
         $achievementController = new AchievementController();
         $achievements = $achievementController->getUnlockedAchievements($this->user->id);
-        $this->assertIsArray($achievements); 
+        $this->assertIsArray($achievements);
         $this->assertEquals(1, count($achievements));
     }
 
@@ -177,11 +187,12 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_that_a_user_has_next_available_achievements(){
+    public function test_that_a_user_has_next_available_achievements()
+    {
         $achievementController = new AchievementController();
         $nextAchievement = $achievementController->getUnlockedAchievements($this->user->id);
-        
-        $this->assertIsArray($nextAchievement); 
+
+        $this->assertIsArray($nextAchievement);
     }
 
     /**
@@ -189,10 +200,11 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_that_a_user_has_next_achievement(){
+    public function test_that_a_user_has_next_achievement()
+    {
         $achievementController = new AchievementController();
         $nextBadge = $achievementController->getNextBadge($this->user->id);
-        
+
         $this->assertIsString($nextBadge);
     }
 
@@ -201,10 +213,11 @@ class AchievementTest extends TestCase
      *
      * @return void
      */
-    public function test_that_a_badge_has_remaining_items_for_next_badge(){
+    public function test_that_a_badge_has_remaining_items_for_next_badge()
+    {
         $achievementController = new AchievementController();
         $nextBadge = $achievementController->getRemainingToUnlockNextBadge($this->user->id);
-        
+
         $this->assertIsNumeric($nextBadge);
     }
 }

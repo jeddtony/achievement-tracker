@@ -15,7 +15,7 @@ Seeding of the database can be done using this command `php artisan db:seed`. Th
 
 
  ### Running Tests
- SQLite is used as the database of choice when running test. 
+ SQLite is used as the database of choice when running tests. 
  
  Create an sqlite database in the `database` folder with the name `test.sqlite`
 
